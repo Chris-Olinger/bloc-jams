@@ -169,7 +169,7 @@ var createSongRow = function(songNumber, songName, songLength) {
        currentlyPlayingSong = null;
      }
    };
-
+// line to save changes
    $row.find('.song-number').click(clickHandler);
    $row.hover(onHover, offHover);
    return $row;
