@@ -376,6 +376,14 @@ blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider,
  blocJams.controller('PlayerBar.controller', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
   $scope.songPlayer = SongPlayer;
 
+  $scope.volumeClass = function() {
+    return {
+      'fa-volume-off': SongPlayer.volume === 0,
+      'fa-volume-down': SongPlayer.volume <= 70 && SongPlayer.volume > 0,
+      'fa-volume-up': SongPlayer.volume > 70,
+    }
+  }
+
     SongPlayer.onTimeUpdate(function(event, time){
     $scope.$apply(function(){
       $scope.playTime = time;
@@ -394,6 +402,7 @@ blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider,
     currentSong: null,
     currentAlbum: null,
     playing: false,
+    volume: 90,
 
     play: function() {
       this.playing = true;
@@ -430,6 +439,12 @@ blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider,
           currentSoundFile.setTime(time);
         }
       },
+      setVolume: function(volume) {
+        if(currentSoundFile){
+          currentSoundFile.setVolume(volume);
+        }
+        this.volume = volume;
+      },
       onTimeUpdate: function(callback) {
         return $rootScope.$on('sound:timeupdate', callback);
       },
@@ -444,6 +459,8 @@ blocJams.config(['$stateProvider', '$locationProvider', function($stateProvider,
         formats: [ "mp3" ],
         preload: true
       });
+
+      currentSoundFile.setVolume(this.volume);
 
       currentSoundFile.bind('timeupdate', function(e){
         $rootScope.$broadcast('sound:timeupdate', this.getTime());
